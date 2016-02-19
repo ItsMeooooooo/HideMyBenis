@@ -4482,6 +4482,7 @@ static unsigned char *stbi__do_png(stbi__png *p, int *x, int *y, int *n, int req
    if (stbi__parse_png_file(p, STBI__SCAN_load, req_comp)) {
       result = p->out;
       p->out = NULL;
+      if (n) *n = p->s->img_out_n;
       if (req_comp && req_comp != p->s->img_out_n) {
          result = stbi__convert_format(result, p->s->img_out_n, req_comp, p->s->img_x, p->s->img_y);
          p->s->img_out_n = req_comp;
@@ -4489,7 +4490,6 @@ static unsigned char *stbi__do_png(stbi__png *p, int *x, int *y, int *n, int req
       }
       *x = p->s->img_x;
       *y = p->s->img_y;
-      if (n) *n = p->s->img_out_n;
    }
    STBI_FREE(p->out);      p->out      = NULL;
    STBI_FREE(p->expanded); p->expanded = NULL;
