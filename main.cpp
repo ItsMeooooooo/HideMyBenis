@@ -1,15 +1,13 @@
-#include <iostream>
-
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STBI_ONLY_JPEG
 #define STBI_ONLY_PNG
 
+#include <iostream>
+#include "sodium.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
 #include <fstream>
-#include <chrono>
-#include <thread>
 
 using namespace std;
 
@@ -186,6 +184,10 @@ void decrypt() {
 }
 
 int main() {
+    if (sodium_init() == -1) {
+        cout << "Error in Sodium. Terminating." << endl;
+        return 1;
+    }
     char choice;
     cout << "Moechtest du entschluesseln oder verschluesseln?(E/V): ";
     cin >> choice;
