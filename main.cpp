@@ -184,6 +184,7 @@ void decrypt() {
 }
 
 int main() {
+
     if (sodium_init() == -1) {
         cout << "Error in Sodium. Terminating." << endl;
         return 1;

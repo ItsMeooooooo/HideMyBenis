@@ -2,7 +2,7 @@
 # Find Sodium library and include directory
 # Very rudimentary. Expects Root of Sodium either in
 # CMake variable SODIUM_ROOT or in system environment
-# variable SODIUM_ROOT
+# variable SODIUM_ROOT.
 
 find_library(
         SODIUM_LIBRARY_DIR NAMES sodium libsodium

@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
-project(Test)
+project(HideMyBenis)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 find_package(Sodium REQUIRED)
 include_directories(${SODIUM_INCLUDE_DIR})
 include_directories(${STB_INCLUDE_DIR})
