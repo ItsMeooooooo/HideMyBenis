@@ -1,200 +1,180 @@
-#define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#define STBI_ONLY_JPEG
-#define STBI_ONLY_PNG
-
 #include <iostream>
-#include "sodium.h"
-#include "stb_image.h"
-#include "stb_image_write.h"
-#include <fstream>
+#include <string.h>
+#include "benis_crypt.h"
 
 using namespace std;
 
-void encrypt() {
-    cout <<
-    "Hallo. Ich akzeptiere JPEGs und PNG-Bilder. Bitte nur Farbbilder ohne Transparenz, ansonsten mache ich ein Farbbild ohne Transparenz daraus. Auch aus Grauwertbildern." <<
-    endl;
-
-    unsigned char *data = NULL;
-    int x, y, n;
-
-    while (data == NULL) {
-        cout << endl <<
-        "Bitte gib den vollstaendigen relativen oder absoluten Pfad zum Bild in dem du etwas verstecken willst an, inklusive Dateiname und -endung: ";
-        string path;
-        cin >> path;
-        const char *p = path.c_str();
-        data = stbi_load(p, &x, &y, &n, 3);
-        if (n == 4) {
-            cout << "Haelst dich wohl fuer einen richtigen Alpha-Kevin?" << endl;
-        }
-        else if (n == 2) {
-            cout << "Grau. Und Alpha. Ob du behindert bist?" << endl;
-        }
-        else if (n == 1) {
-            cout << "Nachts sind alle Moesen grau." << endl;
-        }
+void check_encrypt(int err_code) {
+    switch(err_code){
+        case 0:
+            cout << "Success!" << endl;
+            break;
+        case -1:
+            cout << "Error loading image!" << endl;
+            break;
+        case -2:
+            cout << "Error loading file!" << endl;
+            break;
+        case -3:
+            cout << "File too large!" << endl;
+            break;
+        case -4:
+            cout << "Out of memory!" << endl;
+            break;
+        default:
+            cout << "An unknown error occurred." << endl;
     }
-
-    size_t storage = ((x * y - 10) * 3) / 8;
-    cout << "Du kannst ca. " << storage / 1000000.0 << " MB in diesem Bild verstecken." << endl;
-
-    string filestr;
-    ifstream file;
-    bool fail = true;
-    size_t size = 0;
-    while (fail) {
-        cout << endl << "Zu versteckende Datei eingeben: ";
-        cin >> filestr;
-        file.open(filestr, ios::binary);
-        if (file.good())
-            fail = false;
-        size = 0;
-        file.seekg(0, file.end);
-        size = file.tellg();
-        file.seekg(0, file.beg);
-        if (size > storage) {
-            cout << "Datei zu gross! (" << size / 1000000.0 << "MB)" << endl;
-            fail = true;
-            file.close();
-        }
-    }
-    unsigned char *vptr = data;
-    for (int i = 29; i >= 0; i--) {
-        *vptr = (((*vptr) >> 1) << 1) | ((size >> i) & 1);
-        vptr++;
-    }
-
-    char choice;
-    cout << endl << "Passwortverschluesseln?(J/N): ";
-    cin >> choice;
-
-    if (choice == 'J' || choice == 'j') {
-        cout << endl << "Bitte gib das Passwort zum verschluesseln ein: ";
-        string password;
-        cin >> password;
-        const char *pwd = password.c_str();
-        int count = 0;
-        while (size > 0) {
-            char c;
-            file.get(c);
-            c = c ^ pwd[count];
-            count++;
-            if (count == strlen(pwd))
-                count = 0;
-            for (int i = 7; i >= 0; i--) {
-                *vptr = (((*vptr) >> 1) << 1) | ((c >> i) & 1);
-                vptr++;
-            }
-            size--;
-        }
-        file.close();
-    }
-
-    else {
-        cout << "Verschluesselung der Hurensohn!";
-        while (size > 0) {
-            char c;
-            file.get(c);
-            for (int i = 7; i >= 0; i--) {
-                *vptr = (((*vptr) >> 1) << 1) | ((c >> i) & 1);
-                vptr++;
-            }
-            size--;
-        }
-        file.close();
-    }
-    cout << endl << "Bild speichern unter...: ";
-    string saveme;
-    cin >> saveme;
-    stbi_write_png(saveme.c_str(), x, y, 3, data, 3 * x);
-    stbi_image_free(data);
+    cout << "Press any key to continue...";
+    cin.clear();
+    fflush(stdin);
+    cin.get();
 }
 
-void decrypt() {
-    unsigned char *data = NULL;
-    int x, y, n;
-
-    while (data == NULL) {
-        cout << endl <<
-        "Bitte gib den vollstaendigen relativen oder absoluten Pfad zum Bild, das du entschluesseln willst, an, inklusive Dateiname und -endung: ";
-        string path;
-        cin >> path;
-        const char *p = path.c_str();
-        data = stbi_load(p, &x, &y, &n, 3);
+void check_decrypt(int err_code) {
+    switch(err_code){
+        case 0:
+            cout << "Success!" << endl;
+            break;
+        case -1:
+            cout << "Error loading image!" << endl;
+            break;
+        case -2:
+            cout << "Error saving file!" << endl;
+            break;
+        case -3:
+            cout << "Authentication failed. Wrong password, data damaged or no data hidden." << endl;
+            break;
+        case -4:
+            cout << "Out of memory!" << endl;
+            break;
+        default:
+            cout << "An unknown error occurred." << endl;
     }
-    size_t storage = ((x * y - 10) * 3) / 8;
-
-    unsigned char *vptr = data;
-    size_t size = 0;
-    for (int i = 29; i >= 0; i--) {
-        size = size | (*vptr & 1) << i;
-        vptr++;
-    }
-    if(size > storage){
-        cout << endl << "Hier stimmt etwas nicht. Das Bild versteckt entweder keine Daten oder wurde auf irgendeine Art zerstoert. Druecke irgendeine Taste zum Beenden...";
-        cin.get();
-        return;
-    }
-
-    cout << endl << "Entschluesselte Datei speichern unter...: ";
-    string saveme;
-    cin >> saveme;
-    ofstream out(saveme, ios::binary);
-
-    char choice;
-    cout << endl << "Passwortverschluesselt?(J/N): ";
-    cin >> choice;
-
-    if (choice == 'J' || choice == 'j') {
-        cout << endl << "Bitte gib das Passwort zum entschluesseln ein: ";
-        string password;
-        cin >> password;
-        const char *pwd = password.c_str();
-        int count = 0;
-        while (size > 0) {
-            char c = 0;
-            for (int i = 7; i >= 0; i--) {
-                c = c | (*vptr & 1) << i;
-                vptr++;
-            }
-            size--;
-            c = pwd[count] ^ c;
-            count++;
-            if(count == strlen(pwd))
-                count = 0;
-            out << c;
-        }
-    }
-
-    else {
-        cout << "Verschluesselung der Hurensohn!";
-        while (size > 0) {
-            char c = 0;
-            for (int i = 7; i >= 0; i--) {
-                c = c | (*vptr & 1) << i;
-                vptr++;
-            }
-            size--;
-            out << c;
-        }
-    }
-
+    cout << "Press any key to continue...";
+    cin.clear();
+    fflush(stdin);
+    cin.get();
 }
 
-int main() {
+void manual_encrypt() {
+    cin.clear();
+    fflush(stdin);
+    cout << "Path to image to be used as container: ";
+    string picname;
+    cin >> picname;
+    cout << "Output PNG filename: ";
+    string outname;
+    cin >> outname;
+    cout << "File to be hidden: ";
+    string filename;
+    cin >> filename;
+    cout << "0: No password" << endl << "1: Password" << endl << "Anything else: no password" << endl << "Please select: ";
+    string password;
+    cin.clear();
+    fflush(stdin);
+    switch(cin.get()){
+        case '0':
+            password = "";
+            break;
+        case '1':
+            cout  << "Enter password: ";
+            cin.clear();
+            fflush(stdin);
+            cin >> password;
+            break;
+        default:
+            password = "";
+            break;
+    }
+    check_encrypt(HideMyBenis::encrypt(picname.c_str(), outname.c_str(), filename.c_str(), password.c_str()));
+}
 
+void manual_decrypt() {
+    cin.clear();
+    fflush(stdin);
+    cout << "Path to image to extract from: ";
+    string picname;
+    cin >> picname;
+    cout << "Output filename: ";
+    string filename;
+    cin >> filename;
+    cout << "0: No password" << endl << "1: Password" << endl << "Anything else: no password" << endl << "Please select: ";
+    string password;
+    cin.clear();
+    fflush(stdin);
+    switch(cin.get()){
+        case '0':
+            password = "";
+            break;
+        case '1':
+            cout  << "Enter password: ";
+            cin.clear();
+            fflush(stdin);
+            cin >> password;
+            break;
+        default:
+            password = "";
+            break;
+    }
+    check_decrypt(HideMyBenis::decrypt(picname.c_str(), filename.c_str(), password.c_str()));
+}
+
+void manual_routine() {
+    cout << "0: Encrypt" << endl << "1: Decrypt" << endl << "Anything else: quit" << endl << "Please select: ";
+    cin.clear();
+    fflush(stdin);
+    switch (cin.get()) {
+        case '0':
+            manual_encrypt();
+            break;
+        case '1':
+            manual_decrypt();
+            break;
+        default:
+            return;
+    }
+}
+
+void display_help() {
+    cout << "Welcome to HideMyBenis. This is the Help." << endl << endl;
+    cout << "In order to see this help, start the program with '-h' or '-help'." << endl;
+
+    cout << "In order to encrypt, start the program with: 'a' 'b' 'c' 'd'." << endl;
+    cout << "a: The path to the image where you want to hide data" << endl;
+    cout << "b: The path where you want to save the output PNG" << endl;
+    cout << "c: The path to the file you want to hide" << endl;
+    cout << "d: The password for encryption. Use \"\" for no password" << endl << endl;
+
+    cout << "In order to decrypt, start the program with: 'a' 'b' 'c'." << endl;
+    cout << "a: The path to the image from which you want to extract data" << endl;
+    cout << "b: The path where you want to save the output extracted data" << endl;
+    cout << "c: The password for decryption. Use \"\" for no password" << endl << endl;
+    cout << "Start with no arguments or a wrong number of arguments if you want to enter the values manually." << endl;
+    cout << "Press any key to continue...";
+    cin.clear();
+    fflush(stdin);
+    cin.get();
+}
+
+int main(int argc, char *argv[]) {
     if (sodium_init() == -1) {
         cout << "Error in Sodium. Terminating." << endl;
         return 1;
     }
-    char choice;
-    cout << "Moechtest du entschluesseln oder verschluesseln?(E/V): ";
-    cin >> choice;
-    if (choice == 'e' || choice == 'E')
-        decrypt();
-    else if (choice == 'v' || choice == 'V')
-        encrypt();
+    if (argc == 1) {
+        manual_routine();
+    }
+    else if (strcmp(argv[1], "-h") || strcmp(argv[1], "-help")) {
+        display_help();
+    }
+    else if (argc == 4) {
+        return(HideMyBenis::decrypt(argv[1], argv[2], argv[3]));
+    }
+    else if (argc == 5) {
+        return(HideMyBenis::encrypt(argv[1], argv[2], argv[3], argv[4]));
+    }
+    else {
+        manual_routine();
+    }
     return 0;
 }
