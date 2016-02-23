@@ -66,7 +66,7 @@ namespace HideMyBenis {
         // leave the beginning of the message empty, this will store the authentication
         // start with filling the message with the filesize of the hidden data
         for (int i = crypto_secretbox_MACBYTES; i < BENIS_SIZE_BYTES + crypto_secretbox_MACBYTES; i++) {
-            message[i] = (unsigned char) (UINT8_MAX & (filesize >> (8 * (BENIS_SIZE_BYTES - i + crypto_secretbox_MACBYTES - 1))));
+            message[i] = (unsigned char) (0xff & (filesize >> (8 * (BENIS_SIZE_BYTES - i + crypto_secretbox_MACBYTES - 1))));
         }
         // continue filling message with the actual data that is to be hidden
         for (int i = BENIS_SIZE_BYTES + crypto_secretbox_MACBYTES;
