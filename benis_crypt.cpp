@@ -21,9 +21,10 @@ void encrypt(Image& img, std::istream& input, std::string pwd, bool fastmode)
 	unsigned char* picdata = img.get();
 
 	// calculate size
+	size_t offset = input.tellg();
 	input.seekg(0, input.end);
-	size_t inputsize = input.tellg();
-	input.seekg(0, input.beg);
+	size_t inputsize = size_t(input.tellg()) - offset;
+	input.seekg(offset, input.beg);
 
 	// test if size fits in the bytes encoding the size
 	size_t hide_max = 1;

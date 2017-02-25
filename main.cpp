@@ -52,7 +52,7 @@ int main(int argc, char* argv[])
 		if(arguments.count("-p") && arguments.at("-p").size() == 1) { password = arguments["-p"][0]; }
 		else { cout << "No password given or wrong usage of -p. Using the empty string as password." << endl; }
 		if(arguments.count("-o") && arguments.at("-o").size() == 1) { outputImage = arguments["-o"][0]; }
-		else { cout << "No outputImage given or wrong usage of -o. Using the output.png as outputImage." << endl; }
+		else { cout << "No outputImage given or wrong usage of -o. Using output.png as outputImage." << endl; }
 		try
 		{
 			Image img(inputImage);
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
 		if(arguments.count("-p") && arguments.at("-p").size() == 1) { password = arguments["-p"][0]; }
 		else { cout << "No password given or wrong usage of -p. Using the empty string as password." << endl; }
 		if(arguments.count("-o") && arguments.at("-o").size() == 1) { outputFile = arguments["-o"][0]; }
-		else { cout << "No outputImage given or wrong usage of -o. Using the output.png as outputImage." << endl; }
+		else { cout << "No outputImage given or wrong usage of -o. Using output.png as outputImage." << endl; }
 		try
 		{
 			Image img(inputImage);
