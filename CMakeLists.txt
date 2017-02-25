@@ -13,6 +13,6 @@ include_directories(${SODIUM_INCLUDE_DIR})
 include_directories(${STB_INCLUDE_DIR})
 set(LIBS ${LIBS} ${SODIUM_LIBRARY_DIR})
 
-set(SOURCE_FILES main.cpp benis_crypt.h benis_crypt.cpp)
+set(SOURCE_FILES main.cpp benis_crypt.h benis_crypt.cpp argparser.h argparser.cpp image.h image.cpp)
 add_executable(HideMyBenis ${SOURCE_FILES})
 target_link_libraries(HideMyBenis ${LIBS})
