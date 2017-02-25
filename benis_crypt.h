@@ -1,36 +1,25 @@
 #ifndef HIDEMYBENIS_BENIS_CRYPT_H
 #define HIDEMYBENIS_BENIS_CRYPT_H
 
-#include "sodium.h"
 #include "stb_image.h"
 #include "stb_image_write.h"
-#include <fstream>
 
 namespace HideMyBenis {
-/*
- * Encrypts the file located at 'filename' with 'pwd'
- * and hides it in the Image located at 'picname'.
- * The result is saved as 'outname'.
- * Returns:
- *  0: On success
- * -1: Error in image loading
- * -2: Error in loading file
- * -3: File too large
- * -4: Sodium out of memory
+/**
+ * \brief Encrypts a file and hides it inside an image.
+ * \param picname Path to the image inside which to hide the data.
+ * \param outname Path to where the modified image will be stored.
+ * \param filename The file that shall be encrypted and hidden.
+ * \param pwd The password for encryption.
  */
-    int encrypt(const char *picname, const char *outname, const char *filename, const char *pwd);
+void encrypt(const char* picname, const char* filename, const char* pwd, const char* outname);
 
-/*
- * Extracts the hidden data located in the image 'picname'
- * and decrypts it with 'pwd'.
- * The result is saved as 'filename'.
- * Returns:
- *  0: On success
- * -1: Error in image loading
- * -2: Error in saving file
- * -3: Authentication failed while encrypting
- * -4: Sodium out of memory
+/**
+ * \brief Extracts the hidding data inside an image processed by encrypt(...).
+ * \param picname Path to the image containing hidden data.
+ * \param filename Path to where to save the extracted data.
+ * \param pwd The password for decryption.
  */
-    int decrypt(const char *picname, const char *filename, const char *pwd);
+void decrypt(const char* picname, const char* pwd, const char* filename);
 }
 #endif //HIDEMYBENIS_BENIS_CRYPT_H

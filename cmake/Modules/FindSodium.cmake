@@ -8,11 +8,13 @@ find_library(
         SODIUM_LIBRARY_DIR NAMES sodium libsodium
         HINTS
             ${SODIUM_ROOT} ENV SODIUM_ROOT
+			${CMAKE_SOURCE_DIR}/libsodium/x64/Release/v140/dynamic
         PATH_SUFFIXES lib)
 find_path(
         SODIUM_INCLUDE_DIR NAMES sodium.h
         HINTS
             ${SODIUM_ROOT} ENV SODIUM_ROOT
+			${CMAKE_SOURCE_DIR}/libsodium
         PATH_SUFFIXES include)
 
 INCLUDE(FindPackageHandleStandardArgs)
