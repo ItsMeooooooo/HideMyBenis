@@ -89,8 +89,8 @@ void encrypt(const char* picname, const char* filename, const char* pwd, const c
 	unsigned char key[crypto_secretbox_KEYBYTES];
 	if(crypto_pwhash_scryptsalsa208sha256
 	(key, sizeof key, pwd, strlen(pwd), salt_and_nonce,
-	 crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
-	 crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE) != 0)
+	 crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+	 crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE) != 0)
 	{
 		stbi_image_free(picdata);
 		file.close();
@@ -196,8 +196,8 @@ void decrypt(const char* picname, const char* pwd, const char* filename)
 	unsigned char key[crypto_secretbox_KEYBYTES];
 	if(crypto_pwhash_scryptsalsa208sha256
 	(key, sizeof key, pwd, strlen(pwd), salt_and_nonce,
-	 crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_INTERACTIVE,
-	 crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_INTERACTIVE) != 0)
+	 crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE,
+	 crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE) != 0)
 	{
 		stbi_image_free(picdata);
 		delete[](salt_and_nonce);
