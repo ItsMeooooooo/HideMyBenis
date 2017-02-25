@@ -9,7 +9,7 @@ constexpr size_t FILE_SIZE_BYTES = 4;
 constexpr size_t SALT_AND_NONCE_SIZE = crypto_secretbox_NONCEBYTES + crypto_pwhash_scryptsalsa208sha256_SALTBYTES;
 
 namespace HideMyBenis {
-void encrypt(Image& img, std::istream& input, std::string pwd, bool fastmode)
+void encrypt(Image& img, std::istream& input, const std::string& pwd, bool fastmode)
 {
 	auto opslimit = crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE;
 	auto memlimit = crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE;
@@ -108,7 +108,7 @@ void encrypt(Image& img, std::istream& input, std::string pwd, bool fastmode)
 	}
 }
 
-void decrypt(const Image& img, std::string pwd, std::ostream& output, bool fastmode)
+void decrypt(const Image& img, const std::string& pwd, std::ostream& output, bool fastmode)
 {
 	auto opslimit = crypto_pwhash_scryptsalsa208sha256_OPSLIMIT_SENSITIVE;
 	auto memlimit = crypto_pwhash_scryptsalsa208sha256_MEMLIMIT_SENSITIVE;

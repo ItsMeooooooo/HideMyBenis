@@ -5,7 +5,7 @@ namespace HideMyBenis {
 class Image
 {
 public:
-	explicit Image(std::string filename);
+	explicit Image(const std::string& filename);
 	Image(const Image& other) = delete;
 	Image(Image&& other) = delete;
 
@@ -16,7 +16,7 @@ public:
 
 	unsigned char* get() const { return data; }
 
-	void writeToFile(std::string filename) const;
+	void writeToFile(const std::string& filename) const;
 
 	int getWidth() const { return width; }
 	int getHeight() const { return height; }

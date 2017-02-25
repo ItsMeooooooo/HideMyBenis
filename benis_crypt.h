@@ -10,7 +10,7 @@ namespace HideMyBenis {
  * \param pwd The password for encryption.
  * \param fastmode Whether to use faster password-hashing. Has to be decrypted with the same value.
  */
-void encrypt(Image& img, std::istream& input, std::string pwd, bool fastmode);
+void encrypt(Image& img, std::istream& input, const std::string& pwd, bool fastmode);
 
 /**
  * \brief Extracts the hidding data inside an image processed by encrypt(...).
@@ -19,5 +19,5 @@ void encrypt(Image& img, std::istream& input, std::string pwd, bool fastmode);
  * \param pwd The password for decryption.
  * \param fastmode Whether to use faster password-hashing. Has to have been encrypted with the same value.
  */
-void decrypt(const Image& img, std::string pwd, std::ostream& output, bool fastmode);
+void decrypt(const Image& img, const std::string& pwd, std::ostream& output, bool fastmode);
 }

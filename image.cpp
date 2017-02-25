@@ -10,7 +10,7 @@
 #include "stb_image_write.h"
 
 namespace HideMyBenis {
-Image::Image(std::string filename)
+Image::Image(const std::string& filename)
 {
 	data = stbi_load(filename.c_str(), &width, &height, nullptr, 3);
 	if(!data)
@@ -24,7 +24,7 @@ Image::~Image()
 	stbi_image_free(data);
 }
 
-void Image::writeToFile(std::string filename) const
+void Image::writeToFile(const std::string& filename) const
 {
 	if(!stbi_write_png(filename.c_str(), width, height, 3, data, 3 * width))
 	{
