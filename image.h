@@ -1,7 +1,18 @@
 #pragma once
 #include <string>
+#include <stdexcept>
 
 namespace HideMyBenis {
+class StbLoadException : public std::runtime_error{
+public:
+    explicit StbLoadException(const std::string& fileName) : std::runtime_error("ERROR \"" + fileName + "\":\n Could not load image!"){}
+};
+
+class StbWriteException : public std::runtime_error{
+public:
+    explicit StbWriteException(const std::string& fileName) : std::runtime_error("ERROR \"" + fileName + "\":\n Could not write image!"){}
+};
+
 class Image
 {
 public:

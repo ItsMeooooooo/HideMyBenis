@@ -1,5 +1,4 @@
 #include "image.h"
-#include <stdexcept>
 
 #define STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_WRITE_IMPLEMENTATION
@@ -15,7 +14,7 @@ Image::Image(const std::string& filename)
 	data = stbi_load(filename.c_str(), &width, &height, nullptr, 3);
 	if(!data)
 	{
-		throw std::runtime_error("ERROR in Image::Image(\"" + filename + "\"): Could not load image!");
+        throw StbLoadException(filename);
 	}
 }
 
@@ -28,7 +27,7 @@ void Image::writeToFile(const std::string& filename) const
 {
 	if(!stbi_write_png(filename.c_str(), width, height, 3, data, 3 * width))
 	{
-		throw std::runtime_error("ERROR in Image::writeToFile(\"" + filename + "\"): Could not write image!");
+        throw StbWriteException(filename);
 	}
 }
 }

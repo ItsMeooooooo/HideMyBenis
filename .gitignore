@@ -2,3 +2,4 @@ BUILD_*
 setup.bat
 libsodium
 stb_image*
+CMakeLists.txt.user
