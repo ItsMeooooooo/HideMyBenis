@@ -11,3 +11,5 @@ You will also need:
 * stb_image: https://github.com/nothings/stb/blob/master/stb_image.h
 * stb_image_write: https://github.com/nothings/stb/blob/master/stb_image_write.h  
 You should set STB_INCLUDE_DIR accordingly (or put them into project root).
+
+If you also want to compile the GUI executable, you will need Qt5.
