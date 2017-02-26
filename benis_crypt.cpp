@@ -21,19 +21,20 @@ void encrypt(Image& img, std::istream& input, const std::string& pwd, bool fastm
 	unsigned char* picdata = img.get();
 
 	// calculate size
-	size_t offset = input.tellg();
+	unsigned long long offset = input.tellg();
 	input.seekg(0, input.end);
-	size_t inputsize = size_t(input.tellg()) - offset;
+	unsigned long long insize = unsigned long long(input.tellg()) - offset;
 	input.seekg(offset, input.beg);
 
 	// test if size fits in the bytes encoding the size
-	size_t hide_max = 1;
+	unsigned long long hide_max = 1;
 	hide_max = hide_max << (FILE_SIZE_BYTES * 8);
-	if(inputsize >= hide_max)
+	if(insize >= hide_max)
 	{
 		throw std::runtime_error("ERROR in encrypt: Input data too large!");
 	}
 	// Size of hidden, encrypted data including nonce and salt
+	size_t inputsize = static_cast<size_t>(insize);
 	size_t hidden_size = inputsize + FILE_SIZE_BYTES + crypto_secretbox_MACBYTES + crypto_secretbox_NONCEBYTES +
 			crypto_pwhash_scryptsalsa208sha256_SALTBYTES;
 	// Test for overflow
@@ -57,7 +58,7 @@ void encrypt(Image& img, std::istream& input, const std::string& pwd, bool fastm
 	// start with filling the message with the filesize of the hidden data
 	for(int i = crypto_secretbox_MACBYTES; i < FILE_SIZE_BYTES + crypto_secretbox_MACBYTES; i++) { message[i] = static_cast<unsigned char>(0xff & (inputsize >> (8 * (FILE_SIZE_BYTES - i + crypto_secretbox_MACBYTES - 1)))); }
 	// continue filling message with the actual data that is to be hidden
-	for(int i = FILE_SIZE_BYTES + crypto_secretbox_MACBYTES;
+	for(size_t i = FILE_SIZE_BYTES + crypto_secretbox_MACBYTES;
 	    i < FILE_SIZE_BYTES + crypto_secretbox_MACBYTES + inputsize; i++)
 	{
 		char c;
@@ -72,7 +73,7 @@ void encrypt(Image& img, std::istream& input, const std::string& pwd, bool fastm
 	randombytes_buf(salt_and_nonce, SALT_AND_NONCE_SIZE);
 	// create key via hashing with the salt out of the user's password
 	unsigned char key[crypto_secretbox_KEYBYTES];
-	if(crypto_pwhash_scryptsalsa208sha256(key, sizeof key, pwd.c_str(), pwd.size(), salt_and_nonce, opslimit, memlimit) != 0)
+	if(crypto_pwhash_scryptsalsa208sha256(key, sizeof key, pwd.c_str(), pwd.size(), salt_and_nonce, opslimit, static_cast<size_t>(memlimit)) != 0)
 	{
 		throw std::runtime_error("ERROR in encrypt: libsodium went out of memory!");
 	}
@@ -155,7 +156,7 @@ void decrypt(const Image& img, const std::string& pwd, std::ostream& output, boo
 	}
 
 	unsigned char key[crypto_secretbox_KEYBYTES];
-	if(crypto_pwhash_scryptsalsa208sha256(key, sizeof key, pwd.c_str(), pwd.size(), salt_and_nonce, opslimit, memlimit) != 0)
+	if(crypto_pwhash_scryptsalsa208sha256(key, sizeof key, pwd.c_str(), pwd.size(), salt_and_nonce, opslimit, static_cast<size_t>(memlimit)) != 0)
 	{
 		throw std::runtime_error("ERROR in decrypt: libsodium went out of memory!");
 	}
